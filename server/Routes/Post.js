@@ -1,9 +1,10 @@
 const express = require('express');
 const { createPost } = require('../controllers/Post');
+const { isAuthenticated } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.route("/post/upload").post(createPost)
+router.route("/post/upload").post(isAuthenticated, createPost)
 
 
 module.exports = router;

@@ -13,7 +13,18 @@ exports.register = async (req, res) => {
 
         user = await User.create({ name, email, password, avatar:{public_id : "sample_id", url :"sample_url"} });
 
-        res.status(201).json({ success: true, message: "User created successfully", data: user });
+        const token = await user.generateToken();                           // Generate token
+        const options = { expires: new Date(Date.now()+30*24*60*60*1000),
+            httpOnly: true }                                                        // Options for cookie
+            
+            
+        res.status(200).cookie("token", token, options).json({       // Send token in cookie
+             success: true,
+              message: "User logged in successfully",
+              data: user,
+              token: token,
+             });
+             
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
