@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Post = require('../models/Post');
 
 //Register user
 exports.register = async (req, res) => {
@@ -205,3 +206,109 @@ exports.followUser = async (req, res) => {                  // Follow user
     }
   };
   
+
+
+  exports.deleteMyProfile = async (req, res) => {                         // Delete profile
+    try {
+      const user = await User.findById(req.user._id);                     // Find user by id 
+      const posts = user.posts;                                           // Get posts of user
+      const followers = user.followers;                                  // Get followers of user     
+      const following = user.following;                                  // Get following of user 
+      const userId = user._id;                                           // Get user id for deleting user from followers and following 
+  
+      // Removing Avatar from cloudinary
+      // await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+  
+      await user.deleteOne();                                           // Delete user simply
+  
+      // Logout user after deleting profile
+  
+      res.cookie("token", null, {                                       // Set token to null and expire it  
+        expires: new Date(Date.now()),
+        httpOnly: true,
+      });
+  
+      // Delete all posts of the user
+      for (let i = 0; i < posts.length; i++) {                          // Loop through all posts of user       
+        const post = await Post.findById(posts[i]);                     // Find post by id
+        // await cloudinary.v2.uploader.destroy(post.image.public_id);
+        await post.deleteOne();                                         // Delete post
+      }
+  
+      // Removing User from Followers Following
+      for (let i = 0; i < followers.length; i++) {                           // Loop through all followers of user 
+        const follower = await User.findById(followers[i]);                   // Find follower by id
+  
+        const index = follower.following.indexOf(userId);                     // Get index of user from follower's following array
+        follower.following.splice(index, 1);                                // Remove user from follower's following array
+        await follower.save();                                            // Save follower                            
+      }
+  
+      // Removing User from Following's Followers
+      for (let i = 0; i < following.length; i++) {                      // Loop through all following of user
+        const follows = await User.findById(following[i]);                // Find following by id
+  
+        const index = follows.followers.indexOf(userId);                    // Get index of user from following's followers array
+        follows.followers.splice(index, 1);                                 // Remove user from following's followers array
+        await follows.save();                                               // Save following
+      }
+  
+      // removing all comments of the user from all posts
+      const allPosts = await Post.find();                                 // Get all posts
+  
+      for (let i = 0; i < allPosts.length; i++) {                         // Loop through all posts 
+        const post = await Post.findById(allPosts[i]._id);                // Find post by id
+  
+        for (let j = 0; j < post.comments.length; j++) {                   // Loop through all comments of post 
+          if (post.comments[j].user === userId) {                         // If comment's user is user
+
+            post.comments.splice(j, 1);                                     // Remove comment
+          }
+        }
+        await post.save();                                               // Save post                       
+      }
+      // removing all likes of the user from all posts
+  
+      for (let i = 0; i < allPosts.length; i++) {                         // Loop through all posts
+        const post = await Post.findById(allPosts[i]._id);                  // Find post by id
+  
+        for (let j = 0; j < post.likes.length; j++) {                     // Loop through all likes of post
+          if (post.likes[j] === userId) {                                 // If like is user 
+            post.likes.splice(j, 1);                                      // Remove like
+          }
+        }
+        await post.save();                                                // Save post after removing like
+      }
+  
+      res.status(200).json({                                           // Return success                        
+        success: true,
+        message: "Profile Deleted",
+      });
+    } catch (error) {                                                       // If error return error message
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
+
+
+
+  exports.myProfile = async (req, res) => {                       // Get my profile
+    try {
+      const user = await User.findById(req.user._id).populate(        // Find user by id and populate posts, followers and following
+        "posts followers following"
+      );
+  
+      res.status(200).json({                          // Return success       
+        success: true,
+        user,
+      });
+    } catch (error) {                                 // If error return error message
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };

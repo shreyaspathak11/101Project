@@ -1,6 +1,8 @@
 "use strict";
 
-var User = require('../models/User'); //Register user
+var User = require('../models/User');
+
+var Post = require('../models/Post'); //Register user
 
 
 exports.register = function _callee(req, res) {
@@ -440,4 +442,250 @@ exports.updateProfile = function _callee6(req, res) {
       }
     }
   }, null, null, [[0, 13]]);
+};
+
+exports.deleteMyProfile = function _callee7(req, res) {
+  var user, posts, followers, following, userId, i, post, _i, follower, index, _i2, follows, _index, allPosts, _i3, _post, j, _i4, _post2, _j;
+
+  return regeneratorRuntime.async(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          _context7.prev = 0;
+          _context7.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.user._id));
+
+        case 3:
+          user = _context7.sent;
+          // Find user by id 
+          posts = user.posts; // Get posts of user
+
+          followers = user.followers; // Get followers of user     
+
+          following = user.following; // Get following of user 
+
+          userId = user._id; // Get user id for deleting user from followers and following 
+          // Removing Avatar from cloudinary
+          // await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+
+          _context7.next = 10;
+          return regeneratorRuntime.awrap(user.deleteOne());
+
+        case 10:
+          // Delete user simply
+          // Logout user after deleting profile
+          res.cookie("token", null, {
+            // Set token to null and expire it  
+            expires: new Date(Date.now()),
+            httpOnly: true
+          }); // Delete all posts of the user
+
+          i = 0;
+
+        case 12:
+          if (!(i < posts.length)) {
+            _context7.next = 21;
+            break;
+          }
+
+          _context7.next = 15;
+          return regeneratorRuntime.awrap(Post.findById(posts[i]));
+
+        case 15:
+          post = _context7.sent;
+          _context7.next = 18;
+          return regeneratorRuntime.awrap(post.deleteOne());
+
+        case 18:
+          i++;
+          _context7.next = 12;
+          break;
+
+        case 21:
+          _i = 0;
+
+        case 22:
+          if (!(_i < followers.length)) {
+            _context7.next = 33;
+            break;
+          }
+
+          _context7.next = 25;
+          return regeneratorRuntime.awrap(User.findById(followers[_i]));
+
+        case 25:
+          follower = _context7.sent;
+          // Find follower by id
+          index = follower.following.indexOf(userId); // Get index of user from follower's following array
+
+          follower.following.splice(index, 1); // Remove user from follower's following array
+
+          _context7.next = 30;
+          return regeneratorRuntime.awrap(follower.save());
+
+        case 30:
+          _i++;
+          _context7.next = 22;
+          break;
+
+        case 33:
+          _i2 = 0;
+
+        case 34:
+          if (!(_i2 < following.length)) {
+            _context7.next = 45;
+            break;
+          }
+
+          _context7.next = 37;
+          return regeneratorRuntime.awrap(User.findById(following[_i2]));
+
+        case 37:
+          follows = _context7.sent;
+          // Find following by id
+          _index = follows.followers.indexOf(userId); // Get index of user from following's followers array
+
+          follows.followers.splice(_index, 1); // Remove user from following's followers array
+
+          _context7.next = 42;
+          return regeneratorRuntime.awrap(follows.save());
+
+        case 42:
+          _i2++;
+          _context7.next = 34;
+          break;
+
+        case 45:
+          _context7.next = 47;
+          return regeneratorRuntime.awrap(Post.find());
+
+        case 47:
+          allPosts = _context7.sent;
+          _i3 = 0;
+
+        case 49:
+          if (!(_i3 < allPosts.length)) {
+            _context7.next = 59;
+            break;
+          }
+
+          _context7.next = 52;
+          return regeneratorRuntime.awrap(Post.findById(allPosts[_i3]._id));
+
+        case 52:
+          _post = _context7.sent;
+
+          // Find post by id
+          for (j = 0; j < _post.comments.length; j++) {
+            // Loop through all comments of post 
+            if (_post.comments[j].user === userId) {
+              // If comment's user is user
+              _post.comments.splice(j, 1); // Remove comment
+
+            }
+          }
+
+          _context7.next = 56;
+          return regeneratorRuntime.awrap(_post.save());
+
+        case 56:
+          _i3++;
+          _context7.next = 49;
+          break;
+
+        case 59:
+          _i4 = 0;
+
+        case 60:
+          if (!(_i4 < allPosts.length)) {
+            _context7.next = 70;
+            break;
+          }
+
+          _context7.next = 63;
+          return regeneratorRuntime.awrap(Post.findById(allPosts[_i4]._id));
+
+        case 63:
+          _post2 = _context7.sent;
+
+          // Find post by id
+          for (_j = 0; _j < _post2.likes.length; _j++) {
+            // Loop through all likes of post
+            if (_post2.likes[_j] === userId) {
+              // If like is user 
+              _post2.likes.splice(_j, 1); // Remove like
+
+            }
+          }
+
+          _context7.next = 67;
+          return regeneratorRuntime.awrap(_post2.save());
+
+        case 67:
+          _i4++;
+          _context7.next = 60;
+          break;
+
+        case 70:
+          res.status(200).json({
+            // Return success                        
+            success: true,
+            message: "Profile Deleted"
+          });
+          _context7.next = 76;
+          break;
+
+        case 73:
+          _context7.prev = 73;
+          _context7.t0 = _context7["catch"](0);
+          // If error return error message
+          res.status(500).json({
+            success: false,
+            message: _context7.t0.message
+          });
+
+        case 76:
+        case "end":
+          return _context7.stop();
+      }
+    }
+  }, null, null, [[0, 73]]);
+};
+
+exports.myProfile = function _callee8(req, res) {
+  var user;
+  return regeneratorRuntime.async(function _callee8$(_context8) {
+    while (1) {
+      switch (_context8.prev = _context8.next) {
+        case 0:
+          _context8.prev = 0;
+          _context8.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.user._id).populate( // Find user by id and populate posts, followers and following
+          "posts followers following"));
+
+        case 3:
+          user = _context8.sent;
+          res.status(200).json({
+            // Return success       
+            success: true,
+            user: user
+          });
+          _context8.next = 10;
+          break;
+
+        case 7:
+          _context8.prev = 7;
+          _context8.t0 = _context8["catch"](0);
+          // If error return error message
+          res.status(500).json({
+            success: false,
+            message: _context8.t0.message
+          });
+
+        case 10:
+        case "end":
+          return _context8.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
 };
