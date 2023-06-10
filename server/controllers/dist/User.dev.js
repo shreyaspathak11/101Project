@@ -689,3 +689,54 @@ exports.myProfile = function _callee8(req, res) {
     }
   }, null, null, [[0, 7]]);
 };
+
+exports.getUserProfile = function _callee9(req, res) {
+  var user;
+  return regeneratorRuntime.async(function _callee9$(_context9) {
+    while (1) {
+      switch (_context9.prev = _context9.next) {
+        case 0:
+          _context9.prev = 0;
+          _context9.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.params.id).populate( // Find user by id and populate posts, followers and following
+          "posts followers following"));
+
+        case 3:
+          user = _context9.sent;
+
+          if (user) {
+            _context9.next = 6;
+            break;
+          }
+
+          return _context9.abrupt("return", res.status(404).json({
+            // Return error
+            success: false,
+            message: "User not found"
+          }));
+
+        case 6:
+          res.status(200).json({
+            // Return success
+            success: true,
+            user: user
+          });
+          _context9.next = 12;
+          break;
+
+        case 9:
+          _context9.prev = 9;
+          _context9.t0 = _context9["catch"](0);
+          // If error return error message 
+          res.status(500).json({
+            success: false,
+            message: _context9.t0.message
+          });
+
+        case 12:
+        case "end":
+          return _context9.stop();
+      }
+    }
+  }, null, null, [[0, 9]]);
+};

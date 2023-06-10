@@ -1,6 +1,10 @@
 const User = require('../models/User');
 const Post = require('../models/Post');
 
+
+
+
+
 //Register user
 exports.register = async (req, res) => {
     try {
@@ -30,6 +34,10 @@ exports.register = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 } 
+
+
+
+
 
 //Login user
 exports.login = async (req, res) => {
@@ -65,6 +73,9 @@ exports.login = async (req, res) => {
 
 
 
+
+
+
 exports.logout = async (req, res) => {                                            // Logout user
   try {
     res 
@@ -81,6 +92,10 @@ exports.logout = async (req, res) => {                                          
     });
   }
 };
+
+
+
+
 
 
 exports.followUser = async (req, res) => {                  // Follow user
@@ -132,6 +147,8 @@ exports.followUser = async (req, res) => {                  // Follow user
 
 
 
+
+
   exports.updatePassword = async (req, res) => {                              // Update password
     try {
       const user = await User.findById(req.user._id).select("+password");     // Find user by id and select password
@@ -169,6 +186,10 @@ exports.followUser = async (req, res) => {                  // Follow user
     }
   };
   
+
+
+
+
   exports.updateProfile = async (req, res) => {                       // Update profile
     try {
       const user = await User.findById(req.user._id);                 // Find user by id
@@ -206,6 +227,8 @@ exports.followUser = async (req, res) => {                  // Follow user
     }
   };
   
+
+
 
 
   exports.deleteMyProfile = async (req, res) => {                         // Delete profile
@@ -295,6 +318,7 @@ exports.followUser = async (req, res) => {                  // Follow user
 
 
 
+
   exports.myProfile = async (req, res) => {                       // Get my profile
     try {
       const user = await User.findById(req.user._id).populate(        // Find user by id and populate posts, followers and following
@@ -312,3 +336,33 @@ exports.followUser = async (req, res) => {                  // Follow user
       });
     }
   };
+
+
+
+
+
+  exports.getUserProfile = async (req, res) => {                      // Get user profile
+    try {
+      const user = await User.findById(req.params.id).populate(       // Find user by id and populate posts, followers and following
+        "posts followers following"
+      );
+  
+      if (!user) {                                                    // If user not found return error
+        return res.status(404).json({                                // Return error
+          success: false,
+          message: "User not found",
+        });
+      }
+  
+      res.status(200).json({                                        // Return success
+        success: true,
+        user,
+      });
+    } catch (error) {                                                   // If error return error message 
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  

@@ -12,7 +12,8 @@ var _require = require('../controllers/User'),
     logout = _require.logout,
     updateProfile = _require.updateProfile,
     updatePassword = _require.updatePassword,
-    deleteMyProfile = _require.deleteMyProfile; // import from middlewares
+    deleteMyProfile = _require.deleteMyProfile,
+    myProfile = _require.myProfile; // import from middlewares
 
 
 var _require2 = require('../middlewares/auth'),
@@ -26,4 +27,6 @@ router.route("/follow/:id").get(isAuthenticated, followUser);
 router.route("/update/profile").put(isAuthenticated, updateProfile);
 router.route("/update/password").put(isAuthenticated, updatePassword);
 router.route("/delete/me")["delete"](isAuthenticated, deleteMyProfile);
+router.route("/me").get(isAuthenticated, myProfile);
+router.route("/my/posts").get(isAuthenticated, getMyPosts);
 module.exports = router;
