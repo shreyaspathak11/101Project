@@ -41,32 +41,33 @@ exports.deletePost = async (req, res) => {      // Delete post
       const post = await Post.findById(req.params.id);      // Find post by id from request params
   
       if (!post) {    // If post not found      
-        return res.status(404).json({
+        return res.status(404).json({           // Send response  for post not found
           success: false,
           message: "Post not found",
         });
       }
   
-      if (post.owner.toString() !== req.user._id.toString()) {
-        return res.status(401).json({
+      if (post.owner.toString() !== req.user._id.toString()) {        // If post owner is not the user who is logged in
+        return res.status(401).json({          // Send response for unauthorized
           success: false,
           message: "Unauthorized",
         });
       }
-      await post.remove();
+    
+    await post.deleteOne();        // Remove post from database
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id);     // Find user by id from request params
 
-    const index = user.posts.indexOf(req.params.id);
-    user.posts.splice(index, 1);
+    const index = user.posts.indexOf(req.params.id);    // Get index of post id in user posts array 
+    user.posts.splice(index, 1);                    // Remove post id from user posts array
 
-    await user.save();
+    await user.save();      // Save user to database          
 
-    res.status(200).json({
+    res.status(200).json({    // if all goes well send response for successful post deletion
       success: true,
       message: "Post deleted",
     });
-  } catch (error) {
+  } catch (error) {         // If error send response for server error
     res.status(500).json({
       success: false,
       message: error.message,
