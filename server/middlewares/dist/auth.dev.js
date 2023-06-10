@@ -1,8 +1,10 @@
 "use strict";
 
-var User = require("../models/User");
+var User = require("../models/User"); // Import User model
 
-var jwt = require("jsonwebtoken");
+
+var jwt = require("jsonwebtoken"); // Import jsonwebtoken          
+
 
 exports.isAuthenticated = function _callee(req, res, next) {
   var token, decoded;
@@ -11,7 +13,7 @@ exports.isAuthenticated = function _callee(req, res, next) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
-          token = req.cookies.token;
+          token = req.cookies.token; // Get token from cookies
 
           if (token) {
             _context.next = 4;
@@ -19,6 +21,7 @@ exports.isAuthenticated = function _callee(req, res, next) {
           }
 
           return _context.abrupt("return", res.status(401).json({
+            // Send response for unauthorized and login first
             message: "Please login first"
           }));
 
@@ -33,13 +36,16 @@ exports.isAuthenticated = function _callee(req, res, next) {
 
         case 9:
           req.user = _context.sent;
-          next();
+          // Find user by id from decoded token
+          next(); // Call next middleware
+
           _context.next = 16;
           break;
 
         case 13:
           _context.prev = 13;
           _context.t0 = _context["catch"](0);
+          // If error return response for server error
           res.status(500).json({
             message: _context.t0.message
           });

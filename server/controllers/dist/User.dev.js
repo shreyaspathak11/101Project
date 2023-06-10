@@ -740,3 +740,45 @@ exports.getUserProfile = function _callee9(req, res) {
     }
   }, null, null, [[0, 9]]);
 };
+
+exports.getAllUsers = function _callee10(req, res) {
+  var users;
+  return regeneratorRuntime.async(function _callee10$(_context10) {
+    while (1) {
+      switch (_context10.prev = _context10.next) {
+        case 0:
+          _context10.prev = 0;
+          _context10.next = 3;
+          return regeneratorRuntime.awrap(User.find() // Find all user                    
+          // Search by name (regex: regular expression means search by name even if it is not exactly same) $options: "i" means case insensitive
+          .sort({
+            createdAt: -1
+          }));
+
+        case 3:
+          users = _context10.sent;
+          // Sort by createdAt (newest first)                                                              
+          res.status(200).json({
+            // Return success
+            success: true,
+            users: users
+          });
+          _context10.next = 10;
+          break;
+
+        case 7:
+          _context10.prev = 7;
+          _context10.t0 = _context10["catch"](0);
+          // If error return error message
+          res.status(500).json({
+            success: false,
+            message: _context10.t0.message
+          });
+
+        case 10:
+        case "end":
+          return _context10.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+};

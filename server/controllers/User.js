@@ -366,3 +366,25 @@ exports.followUser = async (req, res) => {                  // Follow user
     }
   };
   
+
+
+
+
+  exports.getAllUsers = async (req, res) => {                                 // Get all users
+    try {
+      const users = await User.find()                                        // Find all user                    
+       // Search by name (regex: regular expression means search by name even if it is not exactly same) $options: "i" means case insensitive
+      .sort({ createdAt: -1 });                                             // Sort by createdAt (newest first)                                                              
+  
+      res.status(200).json({                                              // Return success
+        success: true,
+        users,
+      });
+    } catch (error) {                                                       // If error return error message
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  

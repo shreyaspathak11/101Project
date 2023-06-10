@@ -1,22 +1,22 @@
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
+const User = require("../models/User");         // Import User model
+const jwt = require("jsonwebtoken");          // Import jsonwebtoken          
 
-exports.isAuthenticated = async (req, res, next) => {
-  try {
-    const { token } = req.cookies;
+exports.isAuthenticated = async (req, res, next) => {           // create middleware for authentication
+  try {         
+    const { token } = req.cookies;                        // Get token from cookies
 
-    if (!token) {
-      return res.status(401).json({
+    if (!token) {                                   // If token not found
+      return res.status(401).json({                   // Send response for unauthorized and login first
         message: "Please login first",
       });
     }
 
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);      // Verify token using jwt.verify and decoded method
 
-    req.user = await User.findById(decoded._id);
+    req.user = await User.findById(decoded._id);      // Find user by id from decoded token
 
-    next();
-  } catch (error) {
+    next();                                   // Call next middleware
+  } catch (error) {                     // If error return response for server error
     res.status(500).json({
       message: error.message,
     });

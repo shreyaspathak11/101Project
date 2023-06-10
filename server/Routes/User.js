@@ -2,7 +2,7 @@
 const express = require('express');                      
 const router = express.Router();
 // import from controllers
-const { register, login, followUser, logout, updateProfile, updatePassword, deleteMyProfile, myProfile } = require('../controllers/User');
+const { register, login, followUser, logout, updateProfile, updatePassword, deleteMyProfile, myProfile, getUserProfile, getAllUsers } = require('../controllers/User');
 // import from middlewares
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -16,7 +16,8 @@ router.route("/update/profile").put(isAuthenticated, updateProfile)
 router.route("/update/password").put(isAuthenticated, updatePassword)
 router.route("/delete/me").delete(isAuthenticated, deleteMyProfile);
 router.route("/me").get(isAuthenticated, myProfile);
-router.route("/my/posts").get(isAuthenticated, getMyPosts);
+router.route("/user/:id").get(isAuthenticated, getUserProfile);
+router.route("/users").get(isAuthenticated, getAllUsers);
 
 
 
