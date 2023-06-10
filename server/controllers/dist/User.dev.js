@@ -299,3 +299,144 @@ exports.followUser = function _callee4(req, res) {
     }
   }, null, null, [[0, 30]]);
 };
+
+exports.updatePassword = function _callee5(req, res) {
+  var user, _req$body3, oldPassword, newPassword, isMatch;
+
+  return regeneratorRuntime.async(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+          _context5.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.user._id).select("+password"));
+
+        case 3:
+          user = _context5.sent;
+          // Find user by id and select password
+          _req$body3 = req.body, oldPassword = _req$body3.oldPassword, newPassword = _req$body3.newPassword; // Get old and new password from request body
+
+          if (!(!oldPassword || !newPassword)) {
+            _context5.next = 7;
+            break;
+          }
+
+          return _context5.abrupt("return", res.status(400).json({
+            // Return error message
+            success: false,
+            message: "Please provide old and new password"
+          }));
+
+        case 7:
+          _context5.next = 9;
+          return regeneratorRuntime.awrap(user.matchPassword(oldPassword));
+
+        case 9:
+          isMatch = _context5.sent;
+
+          if (isMatch) {
+            _context5.next = 12;
+            break;
+          }
+
+          return _context5.abrupt("return", res.status(400).json({
+            // Return error message
+            success: false,
+            message: "Incorrect Old password"
+          }));
+
+        case 12:
+          user.password = newPassword; // Set new password
+
+          _context5.next = 15;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 15:
+          // Save user     
+          res.status(200).json({
+            // Return success                     
+            success: true,
+            message: "Password Updated"
+          });
+          _context5.next = 21;
+          break;
+
+        case 18:
+          _context5.prev = 18;
+          _context5.t0 = _context5["catch"](0);
+          // If error return error message
+          res.status(500).json({
+            success: false,
+            message: _context5.t0.message
+          });
+
+        case 21:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, null, null, [[0, 18]]);
+};
+
+exports.updateProfile = function _callee6(req, res) {
+  var user, _req$body4, name, email, avatar;
+
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.prev = 0;
+          _context6.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.user._id));
+
+        case 3:
+          user = _context6.sent;
+          // Find user by id
+          _req$body4 = req.body, name = _req$body4.name, email = _req$body4.email, avatar = _req$body4.avatar; // Get name, email and avatar from request body
+
+          if (name) {
+            // If name provided
+            user.name = name; // Set name to new name
+          }
+
+          if (email) {
+            user.email = email; // Set email to new email
+          } // if (avatar) {
+          //   await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+          //   const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+          //     folder: "avatars",
+          //   });
+          //   user.avatar.public_id = myCloud.public_id;
+          //   user.avatar.url = myCloud.secure_url;
+          // }
+
+
+          _context6.next = 9;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 9:
+          // Save user
+          res.status(200).json({
+            // Return success
+            success: true,
+            message: "Profile Updated"
+          });
+          _context6.next = 15;
+          break;
+
+        case 12:
+          _context6.prev = 12;
+          _context6.t0 = _context6["catch"](0);
+          // If error return error message
+          res.status(500).json({
+            success: false,
+            message: _context6.t0.message
+          });
+
+        case 15:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, null, null, [[0, 12]]);
+};

@@ -128,3 +128,80 @@ exports.followUser = async (req, res) => {                  // Follow user
       });
     }
   };
+
+
+
+  exports.updatePassword = async (req, res) => {                              // Update password
+    try {
+      const user = await User.findById(req.user._id).select("+password");     // Find user by id and select password
+  
+      const { oldPassword, newPassword } = req.body;                          // Get old and new password from request body
+  
+      if (!oldPassword || !newPassword) {                                    // If old or new password not provided     
+        return res.status(400).json({                                       // Return error message
+          success: false,
+          message: "Please provide old and new password",
+        });
+      }
+  
+      const isMatch = await user.matchPassword(oldPassword);                // Check if old password matches by a method 
+  
+      if (!isMatch) {                                                       // If old password does not match
+        return res.status(400).json({                                       // Return error message
+          success: false,
+          message: "Incorrect Old password",
+        });
+      }
+  
+      user.password = newPassword;                                        // Set new password
+      await user.save();                                                 // Save user     
+  
+      res.status(200).json({                                          // Return success                     
+        success: true,
+        message: "Password Updated",
+      });
+    } catch (error) {                                                 // If error return error message
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  
+  exports.updateProfile = async (req, res) => {                       // Update profile
+    try {
+      const user = await User.findById(req.user._id);                 // Find user by id
+  
+      const { name, email, avatar } = req.body;                       // Get name, email and avatar from request body
+  
+      if (name) {                                                     // If name provided
+        user.name = name;                                             // Set name to new name
+      }
+      if (email) {
+        user.email = email;                                           // Set email to new email
+      }
+  
+      // if (avatar) {
+      //   await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+  
+      //   const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+      //     folder: "avatars",
+      //   });
+      //   user.avatar.public_id = myCloud.public_id;
+      //   user.avatar.url = myCloud.secure_url;
+      // }
+  
+      await user.save();                                                // Save user
+  
+      res.status(200).json({                                            // Return success
+        success: true,
+        message: "Profile Updated",
+      });
+    } catch (error) {                                                   // If error return error message
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  
