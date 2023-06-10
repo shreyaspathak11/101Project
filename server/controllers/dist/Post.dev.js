@@ -270,3 +270,72 @@ exports.getPostOfFollowing = function _callee4(req, res) {
     }
   }, null, null, [[0, 10]]);
 };
+
+exports.updateCaption = function _callee5(req, res) {
+  var post;
+  return regeneratorRuntime.async(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+          _context5.next = 3;
+          return regeneratorRuntime.awrap(Post.findById(req.params.id));
+
+        case 3:
+          post = _context5.sent;
+
+          if (post) {
+            _context5.next = 6;
+            break;
+          }
+
+          return _context5.abrupt("return", res.status(404).json({
+            success: false,
+            // Send response for post not found
+            message: "Post not found"
+          }));
+
+        case 6:
+          if (!(post.owner.toString() !== req.user._id.toString())) {
+            _context5.next = 8;
+            break;
+          }
+
+          return _context5.abrupt("return", res.status(401).json({
+            success: false,
+            // Send response for unauthorized
+            message: "Unauthorized"
+          }));
+
+        case 8:
+          post.caption = req.body.caption; // Update post caption
+
+          _context5.next = 11;
+          return regeneratorRuntime.awrap(post.save());
+
+        case 11:
+          // Save post
+          res.status(200).json({
+            // Send response for successful post update
+            success: true,
+            message: "Post updated"
+          });
+          _context5.next = 17;
+          break;
+
+        case 14:
+          _context5.prev = 14;
+          _context5.t0 = _context5["catch"](0);
+          // If error send response for server error
+          res.status(500).json({
+            success: false,
+            message: _context5.t0.message
+          });
+
+        case 17:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, null, null, [[0, 14]]);
+};

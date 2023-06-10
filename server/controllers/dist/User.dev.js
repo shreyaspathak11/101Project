@@ -416,16 +416,17 @@ exports.updateProfile = function _callee6(req, res) {
 
         case 9:
           // Save user
+          console.log(user);
           res.status(200).json({
             // Return success
             success: true,
             message: "Profile Updated"
           });
-          _context6.next = 15;
+          _context6.next = 16;
           break;
 
-        case 12:
-          _context6.prev = 12;
+        case 13:
+          _context6.prev = 13;
           _context6.t0 = _context6["catch"](0);
           // If error return error message
           res.status(500).json({
@@ -433,10 +434,10 @@ exports.updateProfile = function _callee6(req, res) {
             message: _context6.t0.message
           });
 
-        case 15:
+        case 16:
         case "end":
           return _context6.stop();
       }
     }
-  }, null, null, [[0, 12]]);
+  }, null, null, [[0, 13]]);
 };

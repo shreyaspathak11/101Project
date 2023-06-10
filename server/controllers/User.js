@@ -192,7 +192,7 @@ exports.followUser = async (req, res) => {                  // Follow user
       // }
   
       await user.save();                                                // Save user
-  
+      console.log(user);
       res.status(200).json({                                            // Return success
         success: true,
         message: "Profile Updated",
