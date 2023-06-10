@@ -1,8 +1,12 @@
-const express = require('express');
-const { register, login, followUser, logout, updateProfile, updatePassword } = require('../controllers/User');
-const { isAuthenticated } = require('../middlewares/auth');
+// initialize express and express router
+const express = require('express');                      
 const router = express.Router();
+// import from controllers
+const { register, login, followUser, logout, updateProfile, updatePassword } = require('../controllers/User');
+// import from middlewares
+const { isAuthenticated } = require('../middlewares/auth');
 
+//Routes
 router.route("/register").post(register)
 router.route("/login").post(login)
 router.route("/logout").get(logout)
