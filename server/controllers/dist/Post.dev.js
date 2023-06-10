@@ -220,3 +220,53 @@ exports.likeAndUnlikePost = function _callee3(req, res) {
     }
   }, null, null, [[0, 20]]);
 };
+
+exports.getPostOfFollowing = function _callee4(req, res) {
+  var user, posts;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          _context4.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.user._id));
+
+        case 3:
+          user = _context4.sent;
+          _context4.next = 6;
+          return regeneratorRuntime.awrap(Post.find({
+            // Find posts of the user following    
+            owner: {
+              $in: user.following // Get user following array, $in is used to find posts of the user following(monogdb operator)  
+
+            }
+          }).populate("owner likes comments.user"));
+
+        case 6:
+          posts = _context4.sent;
+          // Populate owner, likes and comments.user fields  
+          res.status(200).json({
+            // Send response for successful post retrieval
+            success: true,
+            posts: posts.reverse()
+          });
+          _context4.next = 13;
+          break;
+
+        case 10:
+          _context4.prev = 10;
+          _context4.t0 = _context4["catch"](0);
+          // If error       
+          res.status(500).json({
+            // Send response for server error
+            success: false,
+            message: _context4.t0.message
+          });
+
+        case 13:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, null, null, [[0, 10]]);
+};

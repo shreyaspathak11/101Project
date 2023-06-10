@@ -5,7 +5,8 @@ var express = require('express');
 var _require = require('../controllers/Post'),
     createPost = _require.createPost,
     likeAndUnlikePost = _require.likeAndUnlikePost,
-    deletePost = _require.deletePost;
+    deletePost = _require.deletePost,
+    getPostOfFollowing = _require.getPostOfFollowing;
 
 var _require2 = require('../middlewares/auth'),
     isAuthenticated = _require2.isAuthenticated;
@@ -13,4 +14,5 @@ var _require2 = require('../middlewares/auth'),
 var router = express.Router();
 router.route("/post/upload").post(isAuthenticated, createPost);
 router.route("/post/:id").get(isAuthenticated, likeAndUnlikePost)["delete"](isAuthenticated, deletePost);
+router.route("/posts").get(isAuthenticated, getPostOfFollowing);
 module.exports = router;

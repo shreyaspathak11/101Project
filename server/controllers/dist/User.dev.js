@@ -165,3 +165,137 @@ exports.login = function _callee2(req, res) {
     }
   }, null, null, [[0, 19]]);
 };
+
+exports.logout = function _callee3(req, res) {
+  return regeneratorRuntime.async(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          // Logout user
+          try {
+            res.status(200).cookie("token", null, {
+              expires: new Date(Date.now()),
+              httpOnly: true
+            }) // Set token cookie to none and expire it immediately
+            .json({
+              // Return success
+              success: true,
+              message: "Logged out"
+            });
+          } catch (error) {
+            // If error   
+            res.status(500).json({
+              success: false,
+              message: error.message
+            });
+          }
+
+        case 1:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+};
+
+exports.followUser = function _callee4(req, res) {
+  var userToFollow, loggedInUser, indexfollowing, indexfollowers;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          _context4.next = 3;
+          return regeneratorRuntime.awrap(User.findById(req.params.id));
+
+        case 3:
+          userToFollow = _context4.sent;
+          _context4.next = 6;
+          return regeneratorRuntime.awrap(User.findById(req.user._id));
+
+        case 6:
+          loggedInUser = _context4.sent;
+
+          if (userToFollow) {
+            _context4.next = 9;
+            break;
+          }
+
+          return _context4.abrupt("return", res.status(404).json({
+            // Return error
+            success: false,
+            message: "User not found"
+          }));
+
+        case 9:
+          if (!loggedInUser.following.includes(userToFollow._id)) {
+            _context4.next = 21;
+            break;
+          }
+
+          // If user already followed by logged in user
+          indexfollowing = loggedInUser.following.indexOf(userToFollow._id); // Get index of user to follow from logged in user's following array
+
+          indexfollowers = userToFollow.followers.indexOf(loggedInUser._id); // Get index of logged in user from user to follow's followers array
+
+          loggedInUser.following.splice(indexfollowing, 1); // Remove user to follow from logged in user's following array
+
+          userToFollow.followers.splice(indexfollowers, 1); // Remove logged in user from user to follow's followers array
+
+          _context4.next = 16;
+          return regeneratorRuntime.awrap(loggedInUser.save());
+
+        case 16:
+          _context4.next = 18;
+          return regeneratorRuntime.awrap(userToFollow.save());
+
+        case 18:
+          // Save user to follow
+          res.status(200).json({
+            // Return success
+            success: true,
+            message: "User Unfollowed"
+          });
+          _context4.next = 28;
+          break;
+
+        case 21:
+          loggedInUser.following.push(userToFollow._id); // Add user to follow to logged in user's following array
+
+          userToFollow.followers.push(loggedInUser._id); // Add logged in user to user to follow's followers array
+
+          _context4.next = 25;
+          return regeneratorRuntime.awrap(loggedInUser.save());
+
+        case 25:
+          _context4.next = 27;
+          return regeneratorRuntime.awrap(userToFollow.save());
+
+        case 27:
+          // Save user to follow    
+          res.status(200).json({
+            // Return success OF user followed
+            success: true,
+            message: "User followed"
+          });
+
+        case 28:
+          _context4.next = 33;
+          break;
+
+        case 30:
+          _context4.prev = 30;
+          _context4.t0 = _context4["catch"](0);
+          // If error                    
+          res.status(500).json({
+            success: false,
+            message: _context4.t0.message
+          });
+
+        case 33:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, null, null, [[0, 30]]);
+};

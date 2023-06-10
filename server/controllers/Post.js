@@ -101,3 +101,26 @@ exports.likeAndUnlikePost = async (req, res) => {                         // Lik
         res.status(500).json({ message: "Server Error" });
     }
 };
+
+
+exports.getPostOfFollowing = async (req, res) => {        // Get post of the user following 
+  try {
+    const user = await User.findById(req.user._id);       // Find user by id
+
+    const posts = await Post.find({                       // Find posts of the user following    
+      owner: {
+        $in: user.following,                              // Get user following array, $in is used to find posts of the user following(monogdb operator)  
+      },
+    }).populate("owner likes comments.user");             // Populate owner, likes and comments.user fields  
+
+    res.status(200).json({                                // Send response for successful post retrieval
+      success: true,
+      posts: posts.reverse(),
+    });
+  } catch (error) {                                       // If error       
+    res.status(500).json({                                // Send response for server error
+      success: false,
+      message: error.message,
+    });
+  }
+};

@@ -62,3 +62,69 @@ exports.login = async (req, res) => {
     }
 }
 
+
+
+exports.logout = async (req, res) => {                                            // Logout user
+  try {
+    res 
+      .status(200)
+      .cookie("token", null, { expires: new Date(Date.now()), httpOnly: true })   // Set token cookie to none and expire it immediately
+      .json({                                                                     // Return success
+        success: true,
+        message: "Logged out",
+      });
+  } catch (error) {                                                               // If error   
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+exports.followUser = async (req, res) => {                  // Follow user
+    try {
+      const userToFollow = await User.findById(req.params.id);   // Find user to follow by id
+      const loggedInUser = await User.findById(req.user._id);   // Find logged in user by id
+  
+      if (!userToFollow) {                        // If user to follow not found
+        return res.status(404).json({               // Return error
+          success: false,
+          message: "User not found",
+        });
+      }
+
+                //UNFOLLOW user if already followed                                                                            
+      if (loggedInUser.following.includes(userToFollow._id)) {                      // If user already followed by logged in user
+        const indexfollowing = loggedInUser.following.indexOf(userToFollow._id);    // Get index of user to follow from logged in user's following array
+        const indexfollowers = userToFollow.followers.indexOf(loggedInUser._id);    // Get index of logged in user from user to follow's followers array
+  
+        loggedInUser.following.splice(indexfollowing, 1);       // Remove user to follow from logged in user's following array
+        userToFollow.followers.splice(indexfollowers, 1);       // Remove logged in user from user to follow's followers array
+  
+        await loggedInUser.save();        // Save logged in user
+        await userToFollow.save();       // Save user to follow
+  
+        res.status(200).json({          // Return success
+          success: true,
+          message: "User Unfollowed",
+        });
+      } else {
+        loggedInUser.following.push(userToFollow._id);   // Add user to follow to logged in user's following array
+        userToFollow.followers.push(loggedInUser._id);  // Add logged in user to user to follow's followers array
+  
+        await loggedInUser.save();          // Save logged in user
+        await userToFollow.save();          // Save user to follow    
+  
+        res.status(200).json({              // Return success OF user followed
+          success: true,
+          message: "User followed",
+        });
+      }
+    } catch (error) {                // If error                    
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
