@@ -1,8 +1,10 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
  
-exports.createPost = async (req, res) => {          // Create post
 
+
+
+exports.createPost = async (req, res) => {          // Create post
     try {                   
        
         const newPostData = {             // Create new post data
@@ -12,7 +14,6 @@ exports.createPost = async (req, res) => {          // Create post
                 url: "req.body.url",
             },  
             owner: req.user._id,          // Get user id from request body managed by auth middleware
-
         };
 
         const post = await Post.create(newPostData);    // Create post
@@ -33,6 +34,10 @@ exports.createPost = async (req, res) => {          // Create post
         res.status(500).json({ message: "Server Error" });
     }
 };
+
+
+
+
 
 
 
@@ -78,6 +83,7 @@ exports.deletePost = async (req, res) => {      // Delete post
 
 
 
+
 exports.likeAndUnlikePost = async (req, res) => {                         // Like and unlike post
     try {
         
@@ -103,6 +109,10 @@ exports.likeAndUnlikePost = async (req, res) => {                         // Lik
 };
 
 
+
+
+
+
 exports.getPostOfFollowing = async (req, res) => {        // Get post of the user following 
   try {
     const user = await User.findById(req.user._id);       // Find user by id
@@ -124,6 +134,11 @@ exports.getPostOfFollowing = async (req, res) => {        // Get post of the use
     });
   }
 };
+
+
+
+
+
 
 
 exports.updateCaption = async (req, res) => {             // Update post caption
@@ -151,6 +166,121 @@ exports.updateCaption = async (req, res) => {             // Update post caption
       message: "Post updated",
     });
   } catch (error) {                                           // If error send response for server error
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+exports.commentOnPost = async (req, res) => {               // Comment on post
+  try {
+    const post = await Post.findById(req.params.id);        // Find post by id from request params
+
+    if (!post) {                                           // If post not found return response for post not found         
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    let commentIndex = -1;                               //initializing comment index   
+
+      // Checking if comment already exists
+
+    post.comments.forEach((item, index) => {              // Loop through comments array
+      if (item.user.toString() === req.user._id.toString()) {   // If comment already exists by the user means only one comment per user
+        commentIndex = index;                                   // Set comment index to index of comment
+      }
+    });
+
+    if (commentIndex !== -1) {                                  // If comment already exists by checking comment index
+      post.comments[commentIndex].comment = req.body.comment;   // Update comment
+
+      await post.save();                                        // Save post
+
+      return res.status(200).json({                           // Send response for successful comment update
+        success: true,
+        message: "Comment Updated",
+      });
+    }
+
+    else {                                  // If comment does not exist              
+      post.comments.push({                        // Push comment to comments array
+        user: req.user._id,                               
+        comment: req.body.comment,
+      });
+
+      await post.save();                  // Save post
+      return res.status(200).json({       // Send response for successful comment addition
+        success: true,
+        message: "Comment added",
+      });
+    }
+  } catch (error) {                     // If error send response for server error
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+exports.deleteComment = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);        // Find post by id from request params
+
+    if (!post) {                                            // If post not found return response for post not found
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    // Checking If owner wants to delete
+
+    if (post.owner.toString() === req.user._id.toString()) {      //CASE 1: If post owner is the user who is logged in
+      if (req.body.commentId === undefined) {                     // If comment id is not provided in request body
+        return res.status(400).json({                             // Send response for bad request
+          success: false,
+          message: "Comment Id is required",
+        });
+      }
+
+      post.comments.forEach((item, index) => {                        // Loop through comments array
+        if (item._id.toString() === req.body.commentId.toString()) {  // If comment id matches with comment id in request body
+          return post.comments.splice(index, 1);                        // Delete comment  
+        }
+      });
+
+      await post.save();                                              // Save post to database
+
+      return res.status(200).json({                                   // Send response for successful comment deletion
+        success: true,
+        message: "Selected Comment has deleted",
+      });
+    } else {                                                        //CASE 2: If user is not the owner of the post
+      post.comments.forEach((item, index) => {                          // Loop through comments array
+        if (item.user.toString() === req.user._id.toString()) {     // If comment is by the user who is logged in
+          return post.comments.splice(index, 1);                    // Delete comment
+        }
+      });
+
+      await post.save();                                            // Save post to database
+
+      return res.status(200).json({                                   // Send response for successful comment deletion
+        success: true,
+        message: "Your Comment has deleted",                    
+      });
+    }
+  } catch (error) {                                                   // If error send response for server error
     res.status(500).json({
       success: false,
       message: error.message,

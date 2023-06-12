@@ -339,3 +339,94 @@ exports.updateCaption = function _callee5(req, res) {
     }
   }, null, null, [[0, 14]]);
 };
+
+exports.commentOnPost = function _callee6(req, res) {
+  var post, commentIndex;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.prev = 0;
+          _context6.next = 3;
+          return regeneratorRuntime.awrap(Post.findById(req.params.id));
+
+        case 3:
+          post = _context6.sent;
+
+          if (post) {
+            _context6.next = 6;
+            break;
+          }
+
+          return _context6.abrupt("return", res.status(404).json({
+            success: false,
+            message: "Post not found"
+          }));
+
+        case 6:
+          commentIndex = -1; //initializing comment index   
+          // Checking if comment already exists
+
+          post.comments.forEach(function (item, index) {
+            // Loop through comments array
+            if (item.user.toString() === req.user._id.toString()) {
+              // If comment already exists by the user means only one comment per user
+              commentIndex = index; // Set comment index to index of comment
+            }
+          });
+
+          if (!(commentIndex !== -1)) {
+            _context6.next = 15;
+            break;
+          }
+
+          // If comment already exists by checking comment index
+          post.comments[commentIndex].comment = req.body.comment; // Update comment
+
+          _context6.next = 12;
+          return regeneratorRuntime.awrap(post.save());
+
+        case 12:
+          return _context6.abrupt("return", res.status(200).json({
+            // Send response for successful comment update
+            success: true,
+            message: "Comment Updated"
+          }));
+
+        case 15:
+          // If comment does not exist              
+          post.comments.push({
+            // Push comment to comments array
+            user: req.user._id,
+            comment: req.body.comment
+          });
+          _context6.next = 18;
+          return regeneratorRuntime.awrap(post.save());
+
+        case 18:
+          return _context6.abrupt("return", res.status(200).json({
+            // Send response for successful comment addition
+            success: true,
+            message: "Comment added"
+          }));
+
+        case 19:
+          _context6.next = 24;
+          break;
+
+        case 21:
+          _context6.prev = 21;
+          _context6.t0 = _context6["catch"](0);
+          // If error send response for server error
+          res.status(500).json({
+            success: false,
+            message: _context6.t0.message
+          });
+
+        case 24:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, null, null, [[0, 21]]);
+};

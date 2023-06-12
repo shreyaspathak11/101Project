@@ -1,81 +1,90 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+//import dependencies
+const mongoose = require("mongoose");         //import mongoose for creating schema  
+const bcrypt = require("bcrypt");             //import bcrypt for hashing password
+const jwt = require("jsonwebtoken");          //import jsonwebtoken for generating token
+const crypto = require("crypto");             //import crypto for generating reset password token
 
-const userSchema = new mongoose.Schema({
-  name: {
+const userSchema = new mongoose.Schema({          //create schema of USER
+  name: {                                             //name of user
     type: String,
     required: [true, "Please enter a name"],
   },
 
-  avatar: {
+  avatar: {                                          //avatar of user                       
     public_id: String,
     url: String,
   },
 
-  email: {
+  email: {                                         //email of user                    
     type: String,
     required: [true, "Please enter an email"],
     unique: [true, "Email already exists"],
   },
-  password: {
+  password: {                                         //password of user
     type: String,
     required: [true, "Please enter a password"],
     minlength: [6, "Password must be at least 6 characters"],
     select: false,
   },
 
-  posts: [
+  posts: [                                    //posts of user 
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
+      type: mongoose.Schema.Types.ObjectId,       //type of post here object id mongoose.schema.type.objectid means id of post
+      ref: "Post",                            //ref means reference to post
     },
   ],
-  followers: [
+  followers: [                              //followers of user                   
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-
-  following: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: mongoose.Schema.Types.ObjectId,     //type of follower here object id mongoose.schema.type.objectid means id of follower
+      ref: "User",                            //ref means reference to user
     },
   ],
 
-  resetPasswordToken: String,
-  resetPasswordExpire: Date,
+  following: [                            //following of user               
+    {
+      type: mongoose.Schema.Types.ObjectId,         //type of following here object id mongoose.schema.type.objectid means id of following
+      ref: "User",                                  //ref means reference to user
+    },
+  ],
+
+  resetPasswordToken: String,           //reset password token of user
+  resetPasswordExpire: Date,          //reset password expire of user             
 });
 
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
+
+// Function to hash password before saving
+userSchema.pre("save", async function (next) {                //pre save function for hashing password  
+  if (this.isModified("password")) {                        //check if password is modified   
+    this.password = await bcrypt.hash(this.password, 10);     //hash password using bcrypt
   }
 
-  next();
+  next();                                                   //call next function
 });
 
-userSchema.methods.matchPassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
+
+// Function to compare password
+userSchema.methods.matchPassword = async function (password) {   //match password function
+  return await bcrypt.compare(password, this.password);         //compare password using bcrypt
 };
 
-userSchema.methods.generateToken = function () {
-  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET);
+
+// Function to generate token
+userSchema.methods.generateToken = function () {                //generate token function
+  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET);     //generate token using jsonwebtoken
 };
 
-userSchema.methods.getResetPasswordToken = function () {
-  const resetToken = crypto.randomBytes(20).toString("hex");
 
-  this.resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+// Function to generate reset password token
+userSchema.methods.getResetPasswordToken = function () {        //generate reset password token function
+  const resetToken = crypto.randomBytes(20).toString("hex");    //generate reset password token using crypto
 
-  return resetToken;
+  this.resetPasswordToken = crypto                      //reset password token by hashing using crypto           
+    .createHash("sha256")                               //create hash using sha256 (an algorithm)
+    .update(resetToken)                               //update reset token                    
+    .digest("hex");                                 //digest reset token                
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;   //reset password expire time here 10 minutes
+
+  return resetToken;                          //return reset token
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);        //export user schema
