@@ -388,3 +388,4 @@ exports.followUser = async (req, res) => {                  // Follow user
     }
   };
   
+  
