@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Post = require('../models/Post');
 
-
+const sendEmail = require('../middlewares/sendEmail');
 
 
 
@@ -382,6 +382,58 @@ exports.followUser = async (req, res) => {                  // Follow user
       });
     } catch (error) {                                                       // If error return error message
       res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  
+
+
+  exports.forgotPassword = async (req, res) => {                            // Forgot Password
+    try {
+      const user = await User.findOne({ email: req.body.email });               // Find user by email
+  
+if (!user) {                                                                      // If user not found return error
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+  
+      const resetPasswordToken = user.getResetPasswordToken();                            // Get reset token
+  
+      await user.save();                                                          // Save user
+  
+      const resetUrl = `${req.protocol}://${req.get(                                  
+        "host"
+      )}/password/reset/${resetPasswordToken}`;                             // Create reset password url by adding reset token to url
+  
+      const message = `Reset Your Password by clicking on the link below: \n\n ${resetUrl}`;    // Create message for email with reset url
+  
+      try {                                                                 // Try sending email
+        await sendEmail({                                                   // Send email middleware
+          email: user.email,                                                // User email
+          subject: "Reset Password",                                      // Subject                    
+          message,                                                        // Message
+        });
+  
+        res.status(200).json({                                           // Return success           
+          success: true,
+          message: `Email sent to ${user.email}`,                       // Message that email is sent to user demanding reset password
+        });
+      } catch (error) {                                             // If mail not sent return error
+        user.resetPasswordToken = undefined;                        // Set reset password token to undefined
+        user.resetPasswordExpire = undefined;                       // Set reset password expire to undefined from user model
+        await user.save();                                          // Save user
+  
+        res.status(500).json({                                    // Return error
+          success: false, 
+          message: error.message,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({                                   // If error return error message                 
         success: false,
         message: error.message,
       });

@@ -78,6 +78,8 @@ userSchema.methods.generateToken = function () {                //generate token
 userSchema.methods.getResetPasswordToken = function () {        //generate reset password token function
   const resetToken = crypto.randomBytes(20).toString("hex");    //generate reset password token using crypto
 
+  // we can use "this" to access any user object (name, email, password, etc.)
+
   this.resetPasswordToken = crypto                      //reset password token by hashing using crypto           
     .createHash("sha256")                               //create hash using sha256 (an algorithm)
     .update(resetToken)                               //update reset token                    

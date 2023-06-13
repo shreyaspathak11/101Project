@@ -2,7 +2,9 @@
 
 var User = require('../models/User');
 
-var Post = require('../models/Post'); //Register user
+var Post = require('../models/Post');
+
+var sendEmail = require('../middlewares/sendEmail'); //Register user
 
 
 exports.register = function _callee(req, res) {
@@ -781,4 +783,103 @@ exports.getAllUsers = function _callee10(req, res) {
       }
     }
   }, null, null, [[0, 7]]);
+};
+
+exports.forgotPassword = function _callee11(req, res) {
+  var user, resetPasswordToken, resetUrl, message;
+  return regeneratorRuntime.async(function _callee11$(_context11) {
+    while (1) {
+      switch (_context11.prev = _context11.next) {
+        case 0:
+          _context11.prev = 0;
+          _context11.next = 3;
+          return regeneratorRuntime.awrap(User.findOne({
+            email: req.body.email
+          }));
+
+        case 3:
+          user = _context11.sent;
+
+          if (user) {
+            _context11.next = 6;
+            break;
+          }
+
+          return _context11.abrupt("return", res.status(404).json({
+            success: false,
+            message: "User not found"
+          }));
+
+        case 6:
+          resetPasswordToken = user.getResetPasswordToken(); // Get reset token
+
+          _context11.next = 9;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 9:
+          // Save user
+          resetUrl = "".concat(req.protocol, "://").concat(req.get("host"), "/password/reset/").concat(resetPasswordToken); // Create reset password url by adding reset token to url
+
+          message = "Reset Your Password by clicking on the link below: \n\n ".concat(resetUrl); // Create message for email with reset url
+
+          _context11.prev = 11;
+          _context11.next = 14;
+          return regeneratorRuntime.awrap(sendEmail({
+            // Send email middleware
+            email: user.email,
+            // User email
+            subject: "Reset Password",
+            // Subject                    
+            message: message // Message
+
+          }));
+
+        case 14:
+          res.status(200).json({
+            // Return success           
+            success: true,
+            message: "Email sent to ".concat(user.email) // Message that email is sent to user demanding reset password
+
+          });
+          _context11.next = 24;
+          break;
+
+        case 17:
+          _context11.prev = 17;
+          _context11.t0 = _context11["catch"](11);
+          // If mail not sent return error
+          user.resetPasswordToken = undefined; // Set reset password token to undefined
+
+          user.resetPasswordExpire = undefined; // Set reset password expire to undefined from user model
+
+          _context11.next = 23;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 23:
+          // Save user
+          res.status(500).json({
+            // Return error
+            success: false,
+            message: _context11.t0.message
+          });
+
+        case 24:
+          _context11.next = 29;
+          break;
+
+        case 26:
+          _context11.prev = 26;
+          _context11.t1 = _context11["catch"](0);
+          res.status(500).json({
+            // If error return error message                 
+            success: false,
+            message: _context11.t1.message
+          });
+
+        case 29:
+        case "end":
+          return _context11.stop();
+      }
+    }
+  }, null, null, [[0, 26], [11, 17]]);
 };

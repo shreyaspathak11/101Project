@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 //Import from controllers
-const { createPost, likeAndUnlikePost, deletePost, getPostOfFollowing, updateCaption, commentOnPost } = require('../controllers/Post');
+const { createPost, likeAndUnlikePost, deletePost, getPostOfFollowing, updateCaption, commentOnPost, deleteComment } = require('../controllers/Post');
 //Import from Auth hmiddleware
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -14,7 +14,9 @@ router.route("/post/:id")
 .put(isAuthenticated, updateCaption);
 
 router.route("/posts").get(isAuthenticated, getPostOfFollowing);
-router.route("/post/comment/:id").put(isAuthenticated, commentOnPost);
+router.route("/post/comment/:id")
+.put(isAuthenticated, commentOnPost)
+.delete(isAuthenticated, deleteComment);
 
 //Export router
 module.exports = router;
