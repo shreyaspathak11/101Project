@@ -16,7 +16,8 @@ var _require = require('../controllers/User'),
     myProfile = _require.myProfile,
     getUserProfile = _require.getUserProfile,
     getAllUsers = _require.getAllUsers,
-    forgotPassword = _require.forgotPassword; // import from middlewares
+    forgotPassword = _require.forgotPassword,
+    resetPassword = _require.resetPassword; // import from middlewares
 
 
 var _require2 = require('../middlewares/auth'),
@@ -33,5 +34,6 @@ router.route("/delete/me")["delete"](isAuthenticated, deleteMyProfile);
 router.route("/me").get(isAuthenticated, myProfile);
 router.route("/user/:id").get(isAuthenticated, getUserProfile);
 router.route("/users").get(isAuthenticated, getAllUsers);
-router.route("/forgot/password").post(isAuthenticated, forgotPassword);
+router.route("/forgot/password").post(forgotPassword);
+router.route("/password/reset/:token").put(resetPassword);
 module.exports = router;

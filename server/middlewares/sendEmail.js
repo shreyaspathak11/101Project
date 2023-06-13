@@ -14,7 +14,7 @@ exports.sendEmail = async (options) => {              //export send email functi
 
         // Using MAILTRAP for sending email
 
-    const transport = nodemailer.createTransport({              //create transport for sending email
+    const transport = nodeMailer.createTransport({              //create transport for sending email
         host: "sandbox.smtp.mailtrap.io",                   //host of email from where email is sent
         port: 2525,                                       
         auth: {                                           //authentication of email from mailtrap

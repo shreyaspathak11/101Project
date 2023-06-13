@@ -20,7 +20,7 @@ exports.sendEmail = function _callee(options) {
           //   },
           // });
           // Using MAILTRAP for sending email
-          transport = nodemailer.createTransport({
+          transport = nodeMailer.createTransport({
             //create transport for sending email
             host: "sandbox.smtp.mailtrap.io",
             //host of email from where email is sent

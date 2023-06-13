@@ -1,9 +1,9 @@
 const User = require('../models/User');
 const Post = require('../models/Post');
 
-const sendEmail = require('../middlewares/sendEmail');
+const {sendEmail} = require('../middlewares/sendEmail');
 
-
+const crypto = require('crypto');
 
 //Register user
 exports.register = async (req, res) => {
@@ -440,4 +440,44 @@ if (!user) {                                                                    
     }
   };
   
+
+
+
+
+  exports.resetPassword = async (req, res) => {               // Reset Password
+    try {
+      const resetPasswordToken = crypto                         // Get hashed token
+        .createHash("sha256")                                       // Create hash
+        .update(req.params.token)                                 // Update with token from url
+        .digest("hex");                                           // Get hexadecimal string
+  
+      const user = await User.findOne({                       // Find user by reset password token and reset password expire
+        resetPasswordToken,                                   
+        resetPasswordExpire: { $gt: Date.now() },
+      });
+  
+      if (!user) {                                    // If user not found return error that token is invalid or has expired
+        return res.status(401).json({
+          success: false,
+          message: "Token is invalid or has expired",
+        });
+      }
+  
+      user.password = req.body.password;                    // Set new password
+  
+      user.resetPasswordToken = undefined;                // Set reset password token to undefined
+      user.resetPasswordExpire = undefined;                 // Set reset password expire to undefined
+      await user.save();                                // Save user
+  
+      res.status(200).json({                      // Return success
+        success: true,
+        message: "Password Updated",
+      });
+    } catch (error) {                             // If error return error message
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
   

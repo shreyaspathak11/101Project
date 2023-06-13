@@ -4,7 +4,10 @@ var User = require('../models/User');
 
 var Post = require('../models/Post');
 
-var sendEmail = require('../middlewares/sendEmail'); //Register user
+var _require = require('../middlewares/sendEmail'),
+    sendEmail = _require.sendEmail;
+
+var crypto = require('crypto'); //Register user
 
 
 exports.register = function _callee(req, res) {
@@ -882,4 +885,75 @@ exports.forgotPassword = function _callee11(req, res) {
       }
     }
   }, null, null, [[0, 26], [11, 17]]);
+};
+
+exports.resetPassword = function _callee12(req, res) {
+  var resetPasswordToken, user;
+  return regeneratorRuntime.async(function _callee12$(_context12) {
+    while (1) {
+      switch (_context12.prev = _context12.next) {
+        case 0:
+          _context12.prev = 0;
+          resetPasswordToken = crypto // Get hashed token
+          .createHash("sha256") // Create hash
+          .update(req.params.token) // Update with token from url
+          .digest("hex"); // Get hexadecimal string
+
+          _context12.next = 4;
+          return regeneratorRuntime.awrap(User.findOne({
+            // Find user by reset password token and reset password expire
+            resetPasswordToken: resetPasswordToken,
+            resetPasswordExpire: {
+              $gt: Date.now()
+            }
+          }));
+
+        case 4:
+          user = _context12.sent;
+
+          if (user) {
+            _context12.next = 7;
+            break;
+          }
+
+          return _context12.abrupt("return", res.status(401).json({
+            success: false,
+            message: "Token is invalid or has expired"
+          }));
+
+        case 7:
+          user.password = req.body.password; // Set new password
+
+          user.resetPasswordToken = undefined; // Set reset password token to undefined
+
+          user.resetPasswordExpire = undefined; // Set reset password expire to undefined
+
+          _context12.next = 12;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 12:
+          // Save user
+          res.status(200).json({
+            // Return success
+            success: true,
+            message: "Password Updated"
+          });
+          _context12.next = 18;
+          break;
+
+        case 15:
+          _context12.prev = 15;
+          _context12.t0 = _context12["catch"](0);
+          // If error return error message
+          res.status(500).json({
+            success: false,
+            message: _context12.t0.message
+          });
+
+        case 18:
+        case "end":
+          return _context12.stop();
+      }
+    }
+  }, null, null, [[0, 15]]);
 };
