@@ -1,23 +1,27 @@
 import { createReducer } from "@reduxjs/toolkit";
+const initialState = {
+    loading: false,
+    user: null,
+    error: null,
+  };
 
-const initialState = {}
-
-export const userReducer = createReducer(initialState,(builder) => {
-    // reducers
-    builder.addCase("LoginRequest", (state) => {    // LoginRequest is the action type
-        state.loading = true;
-    })
-
+export const userReducer = createReducer(initialState, (builder) => {
+    builder.addCase("LoginRequest", (state) => {
+      state.loading = true;
+      state.error = null; // Clear any previous errors
+    });
+  
     builder.addCase("LoginSuccess", (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-    })
-
+      state.loading = false;
+      state.user = action.payload;
+      state.error = null; // Clear any previous errors
+    });
+  
     builder.addCase("LoginFailure", (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-    })
-    
+      state.loading = false;
+      state.error = action.payload.message; // Store only the error message
+    });
+
 
     builder.addCase("RegisterRequest", (state) => {
         state.loading = true;
