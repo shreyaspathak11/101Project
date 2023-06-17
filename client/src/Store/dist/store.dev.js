@@ -12,7 +12,8 @@ var _User = require("../Reducers/User");
 var store = (0, _toolkit.configureStore)({
   reducer: {
     // reducers
-    user: _User.userReducer
+    user: _User.userReducer,
+    postOfFollowing: _User.postOfFollowingReducer
   }
 });
 var _default = store;

@@ -1,9 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
-    loading: false,
-    user: null,
-    isAuthenticated: false,
-    error: null,
+  posts: [],
   };
 
 export const userReducer = createReducer(initialState, (builder) => {
@@ -27,36 +24,62 @@ export const userReducer = createReducer(initialState, (builder) => {
     })
 
 
-    builder.addCase("RegisterRequest", (state) => {
+    .addCase("RegisterRequest", (state) => {
         state.loading = true;
     })
 
-    builder.addCase("RegisterSuccess", (state, action) => {
+    .addCase("RegisterSuccess", (state, action) => {
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
     })
 
-    builder.addCase("RegisterFailure", (state, action) => {
+    .addCase("RegisterFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
     })
     
-    builder.addCase("LoadUserRequest", (state) => {
+    .addCase("LoadUserRequest", (state) => {
         state.loading = true;
     })
     
-    builder.addCase("LoadUserSuccess",(state, action) => {
+    .addCase("LoadUserSuccess",(state, action) => {
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
     })
 
-    builder.addCase("LoadUserFailure", (state, action) => {
+    .addCase("LoadUserFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
+    })
+    .addCase("clearErrors", (state) => {
+      state.error = null;
     })
 
 })
+
+
+export const postOfFollowingReducer = createReducer(initialState, (builder) => {
+  builder
+  .addCase("PostOfFollowingRequest", (state) => {
+    state.loading = true;
+  });
+  builder.addCase("PostOfFollowingSuccess", (state, action) => {
+    state.loading = false;
+    state.posts = action.payload;
+  });
+  builder.addCase("PostOfFollowingFailure", (state, action) => {
+    state.loading = false;
+    state.error = action.payload;
+  });
+  builder.addCase("clearErrors", (state) => {
+    state.error = null;
+  })
+})
+
+
+
+//make a reducer => then add it to the store => then dispatch it in the Actions => then use it in the component

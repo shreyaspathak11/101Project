@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loadUser = exports.loginUser = void 0;
+exports.getFollowingPosts = exports.getFollowingsPosts = exports.loadUser = exports.loginUser = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -22,7 +22,7 @@ var loginUser = function loginUser(email, password) {
               type: "LoginRequest"
             });
             _context.next = 4;
-            return regeneratorRuntime.awrap(_axios["default"].post("/api/v1/login", {
+            return regeneratorRuntime.awrap(_axios["default"].post("http://localhost:5000/api/v1/login", {
               email: email,
               password: password
             }, {
@@ -73,7 +73,7 @@ var loadUser = function loadUser() {
               type: "LoadUserRequest"
             });
             _context2.next = 4;
-            return regeneratorRuntime.awrap(_axios["default"].get("/api/v1/me"));
+            return regeneratorRuntime.awrap(_axios["default"].get("api/v1/me"));
 
           case 4:
             _ref2 = _context2.sent;
@@ -103,3 +103,91 @@ var loadUser = function loadUser() {
 };
 
 exports.loadUser = loadUser;
+
+var getFollowingsPosts = function getFollowingsPosts() {
+  return function _callee3(dispatch) {
+    var _ref3, data;
+
+    return regeneratorRuntime.async(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            dispatch({
+              type: "postOfFollowingRequest"
+            });
+            _context3.next = 4;
+            return regeneratorRuntime.awrap(_axios["default"].get("/api/v1/posts"));
+
+          case 4:
+            _ref3 = _context3.sent;
+            data = _ref3.data;
+            dispatch({
+              type: "postOfFollowingSuccess",
+              payload: data.posts
+            });
+            _context3.next = 12;
+            break;
+
+          case 9:
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](0);
+            dispatch({
+              type: "postOfFollowingFailure",
+              payload: _context3.t0.response.data.message
+            });
+
+          case 12:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, null, null, [[0, 9]]);
+  };
+};
+
+exports.getFollowingsPosts = getFollowingsPosts;
+
+var getFollowingPosts = function getFollowingPosts() {
+  return function _callee4(dispatch) {
+    var _ref4, data;
+
+    return regeneratorRuntime.async(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.prev = 0;
+            dispatch({
+              type: "postOfFollowingRequest"
+            });
+            _context4.next = 4;
+            return regeneratorRuntime.awrap(_axios["default"].get("/api/v1/posts"));
+
+          case 4:
+            _ref4 = _context4.sent;
+            data = _ref4.data;
+            dispatch({
+              type: "postOfFollowingSuccess",
+              payload: data.posts
+            });
+            _context4.next = 12;
+            break;
+
+          case 9:
+            _context4.prev = 9;
+            _context4.t0 = _context4["catch"](0);
+            dispatch({
+              type: "postOfFollowingFailure",
+              payload: _context4.t0.response.data.message
+            });
+
+          case 12:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, null, null, [[0, 9]]);
+  };
+};
+
+exports.getFollowingPosts = getFollowingPosts;
