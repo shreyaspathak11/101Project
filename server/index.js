@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 const cloudinary = require("cloudinary");
 
+const PORT = process.env.PORT || 5000;
 connectDB();
 
 require('dotenv').config({ path: './config/.env' });
@@ -30,7 +31,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
   });
   
-app.listen(process.env.PORT, () => {
-    console.log(`Server listening on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
     }
 );

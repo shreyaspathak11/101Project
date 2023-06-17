@@ -8,40 +8,41 @@ exports.userReducer = void 0;
 var _toolkit = require("@reduxjs/toolkit");
 
 var initialState = {};
-var userReducer = (0, _toolkit.createReducer)(initialState, {
+var userReducer = (0, _toolkit.createReducer)(initialState, function (builder) {
   // reducers
-  LoginRequest: function LoginRequest(state) {
+  builder.addCase("LoginRequest", function (state) {
+    // LoginRequest is the action type
     state.loading = true;
-  },
-  LoginSuccess: function LoginSuccess(state, action) {
+  });
+  builder.addCase("LoginSuccess", function (state, action) {
     state.loading = false;
     state.user = action.payload;
-  },
-  LoginFailure: function LoginFailure(state, action) {
+  });
+  builder.addCase("LoginFailure", function (state, action) {
     state.loading = false;
     state.error = action.payload;
-  },
-  RegisterRequest: function RegisterRequest(state) {
+  });
+  builder.addCase("RegisterRequest", function (state) {
     state.loading = true;
-  },
-  RegisterSuccess: function RegisterSuccess(state, action) {
+  });
+  builder.addCase("RegisterSuccess", function (state, action) {
     state.loading = false;
     state.user = action.payload;
-  },
-  RegisterFailure: function RegisterFailure(state, action) {
+  });
+  builder.addCase("RegisterFailure", function (state, action) {
     state.loading = false;
     state.error = action.payload;
-  },
-  LoadUserRequest: function LoadUserRequest(state) {
+  });
+  builder.addCase("LoadUserRequest", function (state) {
     state.loading = true;
-  },
-  LoadUserSuccess: function LoadUserSuccess(state, action) {
+  });
+  builder.addCase("LoadUserSuccess", function (state, action) {
     state.loading = false;
     state.user = action.payload;
-  },
-  LoadUserFailure: function LoadUserFailure(state, action) {
+  });
+  builder.addCase("LoadUserFailure", function (state, action) {
     state.loading = false;
     state.error = action.payload;
-  }
+  });
 });
 exports.userReducer = userReducer;

@@ -2,45 +2,49 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {}
 
-export const userReducer = createReducer(initialState, {
+export const userReducer = createReducer(initialState,(builder) => {
     // reducers
-    LoginRequest: (state) => {
+    builder.addCase("LoginRequest", (state) => {    // LoginRequest is the action type
         state.loading = true;
-    },
-    LoginSuccess: (state, action) => {
+    })
+
+    builder.addCase("LoginSuccess", (state, action) => {
         state.loading = false;
         state.user = action.payload;
-    },
-    LoginFailure: (state, action) => {
+    })
+
+    builder.addCase("LoginFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
-    },
+    })
+    
 
-
-    RegisterRequest: (state) => {
+    builder.addCase("RegisterRequest", (state) => {
         state.loading = true;
-    },
-    RegisterSuccess: (state, action) => {
+    })
+
+    builder.addCase("RegisterSuccess", (state, action) => {
         state.loading = false;
         state.user = action.payload;
-    },
-    RegisterFailure: (state, action) => {
+    })
+
+    builder.addCase("RegisterFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
-    },
-
-
-
-    LoadUserRequest: (state) => {
+    })
+    
+    builder.addCase("LoadUserRequest", (state) => {
         state.loading = true;
-    },
-    LoadUserSuccess: (state, action) => {
+    })
+    
+    builder.addCase("LoadUserSuccess",(state, action) => {
         state.loading = false;
         state.user = action.payload;
-    },
-    LoadUserFailure: (state, action) => {
+    })
+
+    builder.addCase("LoadUserFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
-    },
+    })
 
 })

@@ -12,6 +12,7 @@ var app = express();
 
 var cloudinary = require("cloudinary");
 
+var PORT = process.env.PORT || 5000;
 connectDB();
 
 require('dotenv').config({
@@ -38,6 +39,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
-app.listen(process.env.PORT, function () {
-  console.log("Server listening on port ".concat(process.env.PORT));
+app.listen(PORT, function () {
+  console.log("Server listening on port ".concat(PORT));
 });
