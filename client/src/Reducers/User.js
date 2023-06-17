@@ -1,6 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
-  posts: [],
   };
 
 export const userReducer = createReducer(initialState, (builder) => {

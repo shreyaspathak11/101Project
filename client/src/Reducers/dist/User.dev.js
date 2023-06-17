@@ -7,9 +7,7 @@ exports.postOfFollowingReducer = exports.userReducer = void 0;
 
 var _toolkit = require("@reduxjs/toolkit");
 
-var initialState = {
-  posts: []
-};
+var initialState = {};
 var userReducer = (0, _toolkit.createReducer)(initialState, function (builder) {
   builder.addCase("LoginRequest", function (state) {
     state.loading = true;

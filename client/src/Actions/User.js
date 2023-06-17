@@ -7,7 +7,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     });
 
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/login",
+      "/api/v1/login",
       { email, password },
       {
         headers: {
@@ -69,22 +69,3 @@ export const getFollowingsPosts = () => async (dispatch) => {
 }
 
 
-export const getFollowingPosts = () => async (dispatch) => {
-    try {
-      dispatch({
-        type: "postOfFollowingRequest",
-      });
-  
-      const { data } = await axios.get("/api/v1/posts");
-      dispatch({
-        type: "postOfFollowingSuccess",
-        payload: data.posts,
-      });
-    } catch (error) {
-      dispatch({
-        type: "postOfFollowingFailure",
-        payload: error.response.data.message,
-      });
-    }
-  };
-  
