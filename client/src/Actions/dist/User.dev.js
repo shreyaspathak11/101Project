@@ -3,13 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loginUser = void 0;
+exports.loadUser = exports.loginUser = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-// importing axios to make API requests
 var loginUser = function loginUser(email, password) {
   return function _callee(dispatch) {
     var _ref, data;
@@ -20,18 +19,15 @@ var loginUser = function loginUser(email, password) {
           case 0:
             _context.prev = 0;
             dispatch({
-              // dispatching an action (REDUX)
-              type: "LoginRequest" // action type                                  
-
-            }); //API REQUEST To SERVER
-
+              type: "LoginRequest"
+            });
             _context.next = 4;
-            return regeneratorRuntime.awrap(_axios["default"].post('api/v1/login', {
+            return regeneratorRuntime.awrap(_axios["default"].post("/api/v1/login", {
               email: email,
               password: password
             }, {
               headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
               }
             }));
 
@@ -39,7 +35,6 @@ var loginUser = function loginUser(email, password) {
             _ref = _context.sent;
             data = _ref.data;
             dispatch({
-              // dispatching an action to Reducer (REDUX)
               type: "LoginSuccess",
               payload: data.user
             });
@@ -49,10 +44,9 @@ var loginUser = function loginUser(email, password) {
           case 9:
             _context.prev = 9;
             _context.t0 = _context["catch"](0);
-            // dispatching error)      
             dispatch({
               type: "LoginFailure",
-              payload: _context.t0
+              payload: _context.t0.response.data.message
             });
 
           case 12:
@@ -65,3 +59,47 @@ var loginUser = function loginUser(email, password) {
 };
 
 exports.loginUser = loginUser;
+
+var loadUser = function loadUser() {
+  return function _callee2(dispatch) {
+    var _ref2, data;
+
+    return regeneratorRuntime.async(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            dispatch({
+              type: "LoadUserRequest"
+            });
+            _context2.next = 4;
+            return regeneratorRuntime.awrap(_axios["default"].get("/api/v1/me"));
+
+          case 4:
+            _ref2 = _context2.sent;
+            data = _ref2.data;
+            dispatch({
+              type: "LoadUserSuccess",
+              payload: data.user
+            });
+            _context2.next = 12;
+            break;
+
+          case 9:
+            _context2.prev = 9;
+            _context2.t0 = _context2["catch"](0);
+            dispatch({
+              type: "LoadUserFailure",
+              payload: _context2.t0.response.data.message
+            });
+
+          case 12:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, null, null, [[0, 9]]);
+  };
+};
+
+exports.loadUser = loadUser;

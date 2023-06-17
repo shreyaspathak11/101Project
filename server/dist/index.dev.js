@@ -8,6 +8,8 @@ var connectDB = require('./config/database');
 
 var path = require('path');
 
+var cors = require('cors');
+
 var app = express();
 
 var cloudinary = require("cloudinary");
@@ -17,8 +19,10 @@ connectDB();
 
 require('dotenv').config({
   path: './config/.env'
-}); // Middleware
+}); // Enable CORS
 
+
+app.use(cors()); // Middleware
 
 app.use(express.json());
 app.use(express.urlencoded({

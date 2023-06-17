@@ -10,21 +10,20 @@ var _toolkit = require("@reduxjs/toolkit");
 var initialState = {
   loading: false,
   user: null,
+  isAuthenticated: false,
   error: null
 };
 var userReducer = (0, _toolkit.createReducer)(initialState, function (builder) {
   builder.addCase("LoginRequest", function (state) {
     state.loading = true;
-    state.error = null; // Clear any previous errors
-  });
-  builder.addCase("LoginSuccess", function (state, action) {
+  }).addCase("LoginSuccess", function (state, action) {
     state.loading = false;
     state.user = action.payload;
-    state.error = null; // Clear any previous errors
-  });
-  builder.addCase("LoginFailure", function (state, action) {
+    state.isAuthenticated = true;
+  }).addCase("LoginFailure", function (state, action) {
     state.loading = false;
-    state.error = action.payload.message; // Store only the error message
+    state.error = action.payload;
+    state.isAuthenticated = false;
   });
   builder.addCase("RegisterRequest", function (state) {
     state.loading = true;
@@ -32,10 +31,12 @@ var userReducer = (0, _toolkit.createReducer)(initialState, function (builder) {
   builder.addCase("RegisterSuccess", function (state, action) {
     state.loading = false;
     state.user = action.payload;
+    state.isAuthenticated = true;
   });
   builder.addCase("RegisterFailure", function (state, action) {
     state.loading = false;
     state.error = action.payload;
+    state.isAuthenticated = false;
   });
   builder.addCase("LoadUserRequest", function (state) {
     state.loading = true;
@@ -43,10 +44,12 @@ var userReducer = (0, _toolkit.createReducer)(initialState, function (builder) {
   builder.addCase("LoadUserSuccess", function (state, action) {
     state.loading = false;
     state.user = action.payload;
+    state.isAuthenticated = true;
   });
   builder.addCase("LoadUserFailure", function (state, action) {
     state.loading = false;
     state.error = action.payload;
+    state.isAuthenticated = false;
   });
 });
 exports.userReducer = userReducer;

@@ -18,7 +18,7 @@ const Login = () => {
     <div className='login'>
         <form className='loginForm' onSubmit={loginHandler}>
             <Typography variant="h3" style={{padding: "2vmax"}}>
-            Socialite
+            SOCIALITE
             </Typography>
 
             <input type="email" placeholder='Email' required value={email} onChange={(e) => setEmail(e.target.value)}/>

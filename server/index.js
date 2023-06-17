@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/database');
 const path = require('path');
+const cors = require('cors');
 const app = express();
 const cloudinary = require("cloudinary");
 
@@ -9,7 +10,8 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 require('dotenv').config({ path: './config/.env' });
-
+// Enable CORS
+app.use(cors());
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

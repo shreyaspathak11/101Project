@@ -2,25 +2,29 @@ import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
     loading: false,
     user: null,
+    isAuthenticated: false,
     error: null,
   };
 
 export const userReducer = createReducer(initialState, (builder) => {
-    builder.addCase("LoginRequest", (state) => {
+    builder
+    .addCase("LoginRequest", (state) => {
       state.loading = true;
-      state.error = null; // Clear any previous errors
-    });
+
+    })
   
-    builder.addCase("LoginSuccess", (state, action) => {
+    .addCase("LoginSuccess", (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.error = null; // Clear any previous errors
-    });
-  
-    builder.addCase("LoginFailure", (state, action) => {
+      state.isAuthenticated = true;
+
+    })
+
+    .addCase("LoginFailure", (state, action) => {
       state.loading = false;
-      state.error = action.payload.message; // Store only the error message
-    });
+      state.error = action.payload; 
+      state.isAuthenticated = false;
+    })
 
 
     builder.addCase("RegisterRequest", (state) => {
@@ -30,11 +34,13 @@ export const userReducer = createReducer(initialState, (builder) => {
     builder.addCase("RegisterSuccess", (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.isAuthenticated = true;
     })
 
     builder.addCase("RegisterFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
     })
     
     builder.addCase("LoadUserRequest", (state) => {
@@ -44,11 +50,13 @@ export const userReducer = createReducer(initialState, (builder) => {
     builder.addCase("LoadUserSuccess",(state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.isAuthenticated = true;
     })
 
     builder.addCase("LoadUserFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
     })
 
 })
