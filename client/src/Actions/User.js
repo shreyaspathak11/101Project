@@ -24,7 +24,10 @@ export const loginUser = (email, password) => async (dispatch) => {         // d
     } catch (error) {                                                 // dispatching error)      
         dispatch({
             type: "LoginFailure",
-            payload: error
-        })
+            payload: {
+              message: error.message,  // Store the error message
+              status: error.response?.status  // Store the HTTP status code if available
+            }
+          });
     }   
 };
