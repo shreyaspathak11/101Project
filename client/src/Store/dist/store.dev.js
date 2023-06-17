@@ -9,8 +9,7 @@ var _toolkit = require("@reduxjs/toolkit");
 
 var _User = require("../Reducers/User");
 
-var initialState = {};
-var store = (0, _toolkit.configureStore)(initialState, {
+var store = (0, _toolkit.configureStore)({
   reducer: {
     // reducers
     user: _User.userReducer
