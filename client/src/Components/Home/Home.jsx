@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import './Home.css'
 import User from '../User/User'
 import Post from '../Post/Post'
-import { getFollowingsPosts } from '../../Actions/User'
+import { getAllUsers, getFollowingsPosts } from '../../Actions/User'
 import { useDispatch, useSelector } from 'react-redux'
 import Loader from '../Loader/Loader'
 import { Typography } from '@mui/material'
@@ -12,15 +12,16 @@ const Home = () => {
   const { loading, posts, error } = useSelector(
     (state) => state.postOfFollowing
   );
-
+  const { users, loading: usersLoading } = useSelector((state) => state.allUsers);
     const dispatch = useDispatch();
     useEffect(() => { 
         dispatch(getFollowingsPosts());
+        dispatch(getAllUsers() ); 
 
     }, [dispatch])
 
   return (
-    loading? <Loader /> : (
+    loading===true || usersLoading===true ? <Loader /> : (
       <div className='home'>
         <div className='homeleft'>
         {
@@ -41,13 +42,18 @@ const Home = () => {
            
         </div>
             <div className='homeright'>
-
-    <User
-        userId={"user._id"}
-        name={"user.name"}
-        avatar={"https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcTK7Os2YW_6OfJJGh9rvPUSbNYqUwQXZce6mMIrqMasLen8sg4BDbHwN-UMOAV6Q_lXdvqdhbY-NqCTcGA"}
-        />
-
+            {users && users.length > 0 ? (
+              users.map((user) => (
+              <User
+                key={user._id}
+                userId={user._id}
+                name={user.name}
+                avatar={user.avatar.url}
+              />
+             ))
+            ) : (
+              <Typography>No Users Yet</Typography>
+            )}
             </div>
     </div>
   )

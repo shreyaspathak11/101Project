@@ -80,5 +80,24 @@ export const postOfFollowingReducer = createReducer(initialState, (builder) => {
 })
 
 
+export const allUsersReducer = createReducer(initialState, (builder) => {
+  builder.addCase("allUsersRequest", (state) => {
+    state.loading = true;
+  });
+  builder.addCase("allUsersSuccess", (state, action) => {
+    state.loading = false;
+    state.users = action.payload;
+  });
+  builder.addCase("allUsersFailure", (state, action) => {
+    state.loading = false;
+    state.error = action.payload;
+  });
+  builder.addCase("clearErrors", (state) => {
+    state.error = null;
+  });
+});
+
+
+
 
 //make a reducer => then add it to the store => then dispatch it in the Actions => then use it in the component
