@@ -30,10 +30,10 @@ const Post = ({
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.user);
 
-    const handleLike = () => {
+    const handleLike = async () => {
         setLiked(!liked);
 
-        dispatch(likePost(postId));
+      await dispatch(likePost(postId));
 
         dispatch(getFollowingsPosts());
     };
