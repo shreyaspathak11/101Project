@@ -4,6 +4,7 @@ import User from '../User/User'
 import Post from '../Post/Post'
 import { getFollowingsPosts } from '../../Actions/User'
 import { useDispatch, useSelector } from 'react-redux'
+import Loader from '../Loader/Loader'
 
 const Home = () => {
     
@@ -18,7 +19,8 @@ const Home = () => {
     }, [dispatch])
 
   return (
-    <div className='home'>
+    loading? <Loader /> : (
+      <div className='home'>
         <div className='homeleft'>
             <Post 
                 ownerName={"user.name"}
@@ -37,6 +39,7 @@ const Home = () => {
 
             </div>
     </div>
+  )
   )
 }
 
