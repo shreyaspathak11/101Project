@@ -9,7 +9,7 @@ import { Typography } from '@mui/material'
 
 const Home = () => {
     
-  const { loading, posts, error } = useSelector(
+  const { loading, posts } = useSelector(
     (state) => state.postOfFollowing
   );
   const { users, loading: usersLoading } = useSelector((state) => state.allUsers);
