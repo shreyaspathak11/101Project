@@ -14,11 +14,29 @@ const Home = () => {
     (state) => state.postOfFollowing
   );
   const { users, loading: usersLoading } = useSelector((state) => state.allUsers);
-    
+  
+  const { error: likeError, message } = useSelector((state) => state.like);
+
     useEffect(() => { 
         dispatch(getFollowingsPosts());
         dispatch(getAllUsers()); 
     }, [dispatch])
+
+    useEffect(() => {
+      if (error) {
+        console.log(error);
+        dispatch({ type: "clearErrors" });
+      }
+  
+      if (likeError) {
+        console.log(likeError);
+        dispatch({ type: "clearErrors" });
+      }
+      if (message) {
+        console.log(message);
+        dispatch({ type: "clearMessage" });
+      }
+    }, [ error, message, likeError, dispatch]);
 
   return  loading === true || usersLoading === true ? (
     <Loader />
