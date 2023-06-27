@@ -62,8 +62,7 @@ export const userReducer = createReducer(initialState, (builder) => {
 
 
 export const postOfFollowingReducer = createReducer(initialState, (builder) => {
-  builder
-  .addCase("PostOfFollowingRequest", (state) => {
+  builder.addCase("PostOfFollowingRequest", (state) => {
     state.loading = true;
   });
   builder.addCase("PostOfFollowingSuccess", (state, action) => {

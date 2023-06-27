@@ -14,6 +14,7 @@ router.route("/post/:id")
 .put(isAuthenticated, updateCaption);
 
 router.route("/posts").get(isAuthenticated, getPostOfFollowing);
+
 router.route("/post/comment/:id")
 .put(isAuthenticated, commentOnPost)
 .delete(isAuthenticated, deleteComment);

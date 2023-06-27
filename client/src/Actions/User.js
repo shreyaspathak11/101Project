@@ -50,33 +50,33 @@ export const loadUser = () => async (dispatch) => {
 
 
 export const getFollowingsPosts = () => async (dispatch) => {
-    try{
-        dispatch({
-            type: "postOfFollowingRequest",
-        });
-        const {data} = await axios.get("/api/v1/posts");
-        dispatch({
-            type: "postOfFollowingSuccess",
-            payload: data.posts,
-        });
-    }
-    catch(error){
-        dispatch({
-            type: "postOfFollowingFailure",
-            payload: error.response.data.message,
-        });
-    }
-}
+  try {
+    dispatch({
+      type: "PostOfFollowingRequest",
+    });
+    const { data } = await axios.get("api/v1/posts");
+    dispatch({
+      type: "PostOfFollowingSuccess",
+      payload: data.posts,
+    });
+  } catch (error) {
+    dispatch({
+      type: "PostOfFollowingFailure",
+      payload: error.response.data.message,
+    });
+  }
+};
 
-export const getAllUsers =
-  (name = "") =>
-  async (dispatch) => {
+
+
+
+export const getAllUsers = () =>  async (dispatch) => {
     try {
       dispatch({
         type: "allUsersRequest",
       });
 
-      const { data } = await axios.get(`/api/v1/users?name=${name}`);
+      const { data } = await axios.get(`/api/v1/users`);
       dispatch({
         type: "allUsersSuccess",
         payload: data.users,

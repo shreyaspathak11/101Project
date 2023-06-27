@@ -8,39 +8,41 @@ import Loader from '../Loader/Loader'
 import { Typography } from '@mui/material'
 
 const Home = () => {
-    
-  const { loading, posts } = useSelector(
+  const dispatch = useDispatch();
+
+  const { loading, posts, error } = useSelector(
     (state) => state.postOfFollowing
   );
   const { users, loading: usersLoading } = useSelector((state) => state.allUsers);
-    const dispatch = useDispatch();
+    
     useEffect(() => { 
         dispatch(getFollowingsPosts());
-        dispatch(getAllUsers() ); 
-
+        dispatch(getAllUsers()); 
     }, [dispatch])
 
-  return (
-    loading===true || usersLoading===true ? <Loader /> : (
-      <div className='home'>
-        <div className='homeleft'>
-        {
-            posts && posts.length > 0 ? posts.map((post) => (
-              <Post 
-                key={post._id}
-                caption={post.caption}
-                postId={post._id}
-                postImage={post.image.url}
-                likes={post.likes}
-                comments={post.comments}
-                ownerId={post.owner._id}
-                ownerName={post.owner._id}
-                ownerImage={post.owner.avatar.url}      
+  return  loading === true || usersLoading === true ? (
+    <Loader />
+  ) : (
+    <div className="home">
+      <div className="homeleft">
+        {posts  ? (
+          posts.map((post) => (
+            <Post
+              key={post._id}
+              postId={post._id}
+              caption={post.caption}
+              postImage={post.image.url}
+              likes={post.likes}
+              comments={post.comments}
+              ownerImage={post.owner.avatar.url}
+              ownerName={post.owner.name}
+              ownerId={post.owner._id}
             />
-            )) :  <Typography variant="h6"> No posts yet</Typography>
-        }
-           
-        </div>
+          ))
+        ) : (
+          <Typography variant="h6">No posts yet</Typography>
+        )}
+      </div>
             <div className='homeright'>
             {users && users.length > 0 ? (
               users.map((user) => (
@@ -57,7 +59,7 @@ const Home = () => {
             </div>
     </div>
   )
-  )
+
 }
 
 export default Home

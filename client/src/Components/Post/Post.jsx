@@ -11,18 +11,19 @@ import {
   } from "@mui/icons-material";
 import { useDispatch, useSelector } from 'react-redux';
 import { likePost } from '../../Actions/Post';
+import { getFollowingsPosts } from '../../Actions/User';
 
 const Post = ({
     postId, 
     caption,
-postImage,
-likes=[],
-comments=[],
-ownerId,
-ownerName,
-ownerImage,
-isDelete = false,
-isAccount = false,
+    postImage,
+    likes=[],
+    comments=[],
+    ownerId,
+    ownerName,
+    ownerImage,
+    isDelete = false,
+    isAccount = false,
 }) => {
 
     const [liked, setLiked] = useState(false);
@@ -33,6 +34,8 @@ isAccount = false,
         setLiked(!liked);
 
         dispatch(likePost(postId));
+
+        dispatch(getFollowingsPosts());
     };
     const deletePostHandler = () => {
         console.log("Delete Post");
