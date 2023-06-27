@@ -3,9 +3,14 @@ import './Home.css'
 import User from '../User/User'
 import Post from '../Post/Post'
 import { getFollowingsPosts } from '../../Actions/User'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Home = () => {
+    
+  const { loading, posts, error } = useSelector(
+    (state) => state.postOfFollowing
+  );
+
     const dispatch = useDispatch();
     useEffect(() => { 
         dispatch(getFollowingsPosts());
