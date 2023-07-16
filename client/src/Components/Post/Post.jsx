@@ -28,6 +28,10 @@ const Post = ({
 }) => {
   const [liked, setLiked] = useState(false);
   const [likesUser, setLikesUser] = useState(false);
+
+  const [commentValue, setCommentValue] = useState("");
+  const [commentToggle, setCommentToggle] = useState(false);
+
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
@@ -44,6 +48,11 @@ const Post = ({
 
   const deletePostHandler = () => {
     console.log("Delete Post");
+  };
+
+  const addCommentHandler = (e) => {
+    e.preventDefault();
+    console.log("Add Comment");
   };
 
   useEffect(() => {
@@ -105,7 +114,7 @@ const Post = ({
           {liked ? <Favorite style={{ color: "red" }} /> : <FavoriteBorder />}
         </Button>
 
-        <Button>
+        <Button onClick={() => setCommentToggle(!commentToggle)}>
           <ChatBubbleOutline />
         </Button>
 
@@ -127,6 +136,24 @@ const Post = ({
                 avatar={like.avatar.url}
               />
           ))}
+          </div>
+      </Dialog>
+
+      <Dialog open={commentToggle} onClose={() => setCommentToggle(!commentToggle)}>
+        <div className="DialogBox">
+          <Typography fontWeight={700} variant='h4'>Comments</Typography>
+
+            <form className="commentForm" onSubmit={addCommentHandler}>
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                value={commentValue}
+                onChange={(e) => setCommentValue(e.target.value)}
+                required
+              />
+              <Button type="submit" variant="contained">Post</Button>
+            </form>
+  
           </div>
       </Dialog>
     </div>
