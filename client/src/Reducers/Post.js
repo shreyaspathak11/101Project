@@ -22,4 +22,16 @@ export const likeReducer = createReducer(initialState, (builder) => {
     .addCase("clearMessages", (state) => {
         state.message = null;
     })
+    .addCase("addCommentRequest", (state) => {
+        state.loading = true;
+    }  )
+    .addCase("addCommentSuccess", (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+    })
+    .addCase("addCommentFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+
 })
