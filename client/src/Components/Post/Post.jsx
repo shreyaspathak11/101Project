@@ -10,7 +10,7 @@ import {
   DeleteOutline,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from 'react-redux';
-import { likePost } from '../../Actions/Post';
+import { likePost, addComment } from '../../Actions/Post';
 import { getFollowingsPosts } from '../../Actions/User';
 import User from '../User/User';
 
@@ -50,9 +50,10 @@ const Post = ({
     console.log("Delete Post");
   };
 
-  const addCommentHandler = (e) => {
+  const addCommentHandler = async(e) => {
     e.preventDefault();
-    console.log("Add Comment");
+    
+    await dispatch(addComment(postId, commentValue));
   };
 
   useEffect(() => {
