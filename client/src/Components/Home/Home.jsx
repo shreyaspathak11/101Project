@@ -46,8 +46,8 @@ const Home = () => {
         {posts  ? (
           posts.map((post) => (
             <Post
-              key={post._id}
-              postId={post._id}
+              key={post?._id}
+              postId={post?._id}
               caption={post.caption}
               postImage={post.image.url}
               likes={post.likes}
@@ -65,8 +65,8 @@ const Home = () => {
             {users && users.length > 0 ? (
               users.map((user) => (
               <User
-                key={user._id}
-                userId={user._id}
+                key={user?._id}
+                userId={user?._id}
                 name={user.name}
                 avatar={user.avatar.url}
               />

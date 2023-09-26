@@ -10,9 +10,10 @@ import {
   DeleteOutline,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from 'react-redux';
-import { likePost, addComment } from '../../Actions/Post';
+import { likePost, addCommentOnPost } from '../../Actions/Post';
 import { getFollowingsPosts } from '../../Actions/User';
 import User from '../User/User';
+import CommentCard from '../CommentCard/CommentCard';
 
 const Post = ({
   postId,
@@ -53,16 +54,22 @@ const Post = ({
   const addCommentHandler = async(e) => {
     e.preventDefault();
     
-    await dispatch(addComment(postId, commentValue));
+    await dispatch(addCommentOnPost(postId, commentValue));
+
+    if (isAccount) {
+      console.log("dispatch(getMyPosts());")
+    } else {
+      dispatch(getFollowingsPosts());
+    }
   };
 
   useEffect(() => {
     likes.forEach((item) => {
-      if (item._id === user._id) {
+      if (item._id === user?._id) {
         setLiked(true);
       }
     });
-  }, [likes, user._id]);
+  }, [likes, user?._id]);
 
   return (
     <div className="post">
@@ -131,8 +138,8 @@ const Post = ({
 
           {likes.map((like) => (
             <User
-                key={like._id}
-                userId={like._id}
+                key={like?._id}
+                userId={like?._id}
                 name={like.name}
                 avatar={like.avatar.url}
               />
@@ -154,7 +161,23 @@ const Post = ({
               />
               <Button type="submit" variant="contained">Post</Button>
             </form>
-  
+            
+            {comments.length > 0 ? (
+            comments.map((item) => (
+              <CommentCard
+                userId={item.user?._id}
+                name={item.user.name}
+                avatar={item.user.avatar.url}
+                comment={item.comment}
+                commentId={item?._id}
+                key={item?._id}
+                postId={postId}
+                isAccount={isAccount}
+              />
+            ))
+          ) : (
+            <Typography>No comments Yet</Typography>
+          )}
           </div>
       </Dialog>
     </div>
