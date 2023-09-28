@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loadUser } from "./Actions/User";
 import Home from "./Components/Home/Home";
+import Account from "./Components/Account/Account";
 
 function App() {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ function App() {
       {isAuthenticated && <Header />}
       <Routes>
         <Route path="/" element={isAuthenticated ? <Home /> : <Login />} />
+        <Route  path="/account" element={isAuthenticated ? <Account /> : <Login />} />
       </Routes>
     </Router>
   );

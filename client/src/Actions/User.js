@@ -105,3 +105,45 @@ export const getAllUsers = () =>  async (dispatch) => {
       });
     }
   };
+
+
+
+  export const logoutUser = () => async (dispatch) => {
+    try {
+      dispatch({
+        type: "LogoutUserRequest",
+      });
+  
+      await axios.get("/api/v1/logout");
+  
+      dispatch({
+        type: "LogoutUserSuccess",
+      });
+    } catch (error) {
+      dispatch({
+        type: "LogoutUserFailure",
+        payload: error.response.data.message,
+      });
+    }
+  };
+
+
+  export const deleteMyProfile = () => async (dispatch) => {
+    try {
+      dispatch({
+        type: "deleteProfileRequest",
+      });
+  
+      const { data } = await axios.delete("/api/v1/delete/me");
+  
+      dispatch({
+        type: "deleteProfileSuccess",
+        payload: data.message,
+      });
+    } catch (error) {
+      dispatch({
+        type: "deleteProfileFailure",
+        payload: error.response.data.message,
+      });
+    }
+  };

@@ -46,3 +46,21 @@ export const likeReducer = createReducer(initialState, (builder) => {
     })
 
 })
+
+export const  myPostsReducer = createReducer (initialState, (builder) => {
+    builder
+    .addCase("myPostsRequest", (state)=>{
+        state.loading=true;
+    })
+    .addCase("myPostsSuccess", (state, action) => {
+        state.loading = false;
+        state.posts = action.payload;
+    } )
+    .addCase("myPostsFailure",(state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("clearErrors", (state) => {
+        state.error = null;
+    })
+} )

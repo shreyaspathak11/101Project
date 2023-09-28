@@ -17,6 +17,7 @@ const {
     resetPassword } = require('../controllers/User');
 // import from middlewares
 const { isAuthenticated } = require('../middlewares/auth');
+const { getMyPosts } = require('../../client/src/Actions/User');
 
 //Routes
 router.route("/register").post(register)
@@ -29,6 +30,7 @@ router.route("/update/password").put(isAuthenticated, updatePassword)
 router.route("/delete/me").delete(isAuthenticated, deleteMyProfile);
 router.route("/me").get(isAuthenticated, myProfile);
 router.route("/user/:id").get(isAuthenticated, getUserProfile);
+router.route("/my/posts").get(isAuthenticated, getMyPosts)
 router.route("/users").get(isAuthenticated, getAllUsers);
 router.route("/forgot/password").post(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);
