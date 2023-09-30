@@ -44,8 +44,9 @@ exports.login = async (req, res) => {
     try {
        const { email, password } = req.body;        // Get email and password from request body
        
-       const user = await User.findOne({ email }).select("+password");      // Find user with email
-
+       const user = await User.findOne({ email })       // Find user by email
+        .select("+password")                       // this is to select password as it is not selected by default
+       .populate("posts followers following")     // Populate posts, followers and following    
          if (!user) {       // If user not found
             return res.status(404).json({ success: false, message: "User not found" });
         }
