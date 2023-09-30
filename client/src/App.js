@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { loadUser } from "./Actions/User";
 import Home from "./Components/Home/Home";
 import Account from "./Components/Account/Account";
+import NewPost from "./Components/NewPost/NewPost";
 
 function App() {
   const dispatch = useDispatch();
@@ -23,7 +24,12 @@ function App() {
       {isAuthenticated && <Header />}
       <Routes>
         <Route path="/" element={isAuthenticated ? <Home /> : <Login />} />
+        
         <Route  path="/account" element={isAuthenticated ? <Account /> : <Login />} />
+        <Route
+          path="/newpost"
+          element={isAuthenticated ? <NewPost /> : <Login />}
+        />
       </Routes>
     </Router>
   );
